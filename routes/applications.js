@@ -21,14 +21,14 @@ router
     const { address, signature,message,twitter, applicationBody} = req.body;
 
     //Check if the signature is valid, coming from the right address
-    const isValid = await etherService.verifySignature(signature, address,message);
+    const isValid = await etherService.verifySignature(signature, address.toLocaleLowerCase(),message);
     if (!isValid) {
       res.status(400).send({message:"Invalid_Signature"});
       return;
     }
-
+    
     // Check if the application already exists
-    let result = await dbService.getApplication(address,twitter);
+    let result = await dbService.getApplication(address.toLocaleLowerCase(),twitter);
     let application = result.rows[0];
     if (!dbService.isEmpty(application)) {
       return res.status(400).send({message:'Application already exists'});
@@ -42,7 +42,7 @@ router
        (address, twitter, status, submittedOn, updatedOn, applicationBody)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [address, twitter, constants.SUBMITTED, submittedOn, updatedOn, applicationBody],
+      [address.toLocaleLowerCase(), twitter, constants.SUBMITTED, submittedOn, updatedOn, applicationBody],
     );
     application = result.rows[0];
 
@@ -56,7 +56,7 @@ router
     const {signature,signer,message,address,twitter, status} = req.body;
     const updatedon = new Date();
     
-    let existingApplication = await dbService.getApplication(address,twitter);
+    let existingApplication = await dbService.getApplication(address.toLocaleLowerCase(),twitter);
 
     if (dbService.isEmpty(existingApplication)) {
       return res.status(400).send({message:'Application does not exist'});
@@ -78,7 +78,7 @@ router
        SET status = $1, updatedon = $2
        WHERE address = $3 AND twitter = $4
        RETURNING *`,
-      [status, updatedon, address, twitter]
+      [status, updatedon, address.toLocaleLowerCase(), twitter]
     );
     const application = result.rows[0];
 
