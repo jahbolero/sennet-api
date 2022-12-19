@@ -48,8 +48,6 @@ router
       return res.status(400).send({message:errorMessage});
     }
 
-    console.log("INSERTING");
-
     // Insert the application into the database
     const submittedOn = new Date();
     const updatedOn = new Date();
@@ -103,6 +101,10 @@ router
       res.status(404).send("Application not found");
     } else {
       // Return the updated application
+      if(application.status == constants.APPROVED){
+       await twitterService.sendTweet(twitter);
+      }
+
       res.json(application);
     }
   });

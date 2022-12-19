@@ -1,4 +1,7 @@
 const Twit = require("twit");
+const fs = require('fs');
+const path = require('path');
+
 const client = new Twit({
   consumer_key: "uZ2zXfLWEqo0VatQtwYtyAOaU",
   consumer_secret: "6CMTSiRL3pcSzIfvexQeWGHAVMs7J66x1OVTn0RO5c9m92o80s",
@@ -8,26 +11,37 @@ const client = new Twit({
 
 
 const { constants } = require("../constants");
+const { imageService } = require("./imageService");
 
 const twitterService = {
-  sendTweet: async (tweetText) => {
-    console.log("postTweet...");
-    return new Promise((resolve, reject) => {
-      client.post(
-        "statuses/update",
-        {
-          status: tweetText,
-        },
-        (error, data, response) => {
-          if (error) {
+  sendTweet: async (username) => {
+    return new Promise( async (resolve, reject) => {
+      const bufferImage = await imageService.createTweetImage(username);
+      const imageData = Buffer.from(bufferImage).toString("base64");
+      client.post('media/upload', { media_data: imageData },(error,data,response)=>{
+        if (error) {
             console.log(error);
             reject(error);
           } else {
-            console.log(data);
-            resolve(data);
+            const mediaIdStr = data.media_id_string;
+            const params = { status: constants.CONGRATULATIONS_TWEET +" "+ username, media_ids: [mediaIdStr] };
+            client.post(
+                "statuses/update",
+                params,
+                (error, data, response) => {
+                  if (error) {
+                    console.log(error);
+                    reject(error);
+                  } else {
+                    // console.log(data);
+                    resolve(data);
+                  }
+                }
+              );
           }
-        }
-      );
+      })
+
+
     });
   },
 
@@ -77,4 +91,5 @@ const twitterService = {
 
 // Export the helper object
 module.exports.twitterService = twitterService;
+
 
