@@ -57,11 +57,11 @@ describe("Applications", () => {
       await chai.request(server).post("/api/applications").send(application);
 
       // Try to insert the same application again
+      
       const res = await chai
         .request(server)
         .post("/api/applications")
         .send(application);
-
       // Check the response
       res.should.have.status(400);
       res.body.should.be.a("object");

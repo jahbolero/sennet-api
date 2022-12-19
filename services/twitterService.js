@@ -32,13 +32,15 @@ const twitterService = {
   },
 
   verifyTweet: async (username) => {
-    const numTweets = 5;
+    const numTweets = 10;
 
     try {
       // Use the Twit instance to pull recent tweets from the specified user
       const tweets = await client.get("statuses/user_timeline", {
         screen_name: username,
         count: numTweets,
+        exclude_replies: true,
+        include_rts: false,
       });
       var text = JSON.stringify(tweets.data);
       if (text.includes(constants.VERIFICATION_TEXT)) {
@@ -76,5 +78,3 @@ const twitterService = {
 // Export the helper object
 module.exports.twitterService = twitterService;
 
-twitterService.verifyTweet("@dibolero");
-twitterService.verifyFollow("@dibolero");

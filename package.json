@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon app.js",
-    "test": "mocha --recursive -r chai-http -r chai tests"
+    "test": "mocha --recursive -r chai-http -r chai tests --timeout 5000"
   },
   "author": "",
   "license": "ISC",
