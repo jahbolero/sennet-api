@@ -1,6 +1,6 @@
 const Twit = require("twit");
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 const client = new Twit({
   consumer_key: "uZ2zXfLWEqo0VatQtwYtyAOaU",
@@ -9,39 +9,39 @@ const client = new Twit({
   access_token_secret: "waGFX4ksTxyL1vldKUgmzkaMbrSHHkz6e85mgTFVLbUeH",
 });
 
-
 const { constants } = require("../constants");
 const { imageService } = require("./imageService");
 
 const twitterService = {
   sendTweet: async (username) => {
-    return new Promise( async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const bufferImage = await imageService.createTweetImage(username);
       const imageData = Buffer.from(bufferImage).toString("base64");
-      client.post('media/upload', { media_data: imageData },(error,data,response)=>{
-        if (error) {
+      client.post(
+        "media/upload",
+        { media_data: imageData },
+        (error, data, response) => {
+          if (error) {
             console.log(error);
             reject(error);
           } else {
             const mediaIdStr = data.media_id_string;
-            const params = { status: constants.CONGRATULATIONS_TWEET +" "+ username, media_ids: [mediaIdStr] };
-            client.post(
-                "statuses/update",
-                params,
-                (error, data, response) => {
-                  if (error) {
-                    console.log(error);
-                    reject(error);
-                  } else {
-                    // console.log(data);
-                    resolve(data);
-                  }
-                }
-              );
+            const params = {
+              status: constants.CONGRATULATIONS_TWEET + " " + username,
+              media_ids: [mediaIdStr],
+            };
+            client.post("statuses/update", params, (error, data, response) => {
+              if (error) {
+                console.log(error);
+                reject(error);
+              } else {
+                // console.log(data);
+                resolve(data);
+              }
+            });
           }
-      })
-
-
+        }
+      );
     });
   },
 
@@ -73,7 +73,7 @@ const twitterService = {
   verifyFollow: async (username) => {
     try {
       // Get a list of the users that user1 follows
-      const { data } = await client.get('friendships/show', {
+      const { data } = await client.get("friendships/show", {
         source_screen_name: username,
         target_screen_name: constants.VERIFICATION_FOLLOW,
       });
@@ -83,13 +83,24 @@ const twitterService = {
       console.log(follows);
       return follows;
     } catch (error) {
-        console.log(`${username}:${error?.message}`);
-        return false;
+      console.log(`${username}:${error?.message}`);
+      return false;
+    }
+  },
+
+  getUserInfo: async (username) => {
+    try {
+      const { data } = await client.get("users/show", {
+        screen_name: username,
+      });
+      return data;
+    } catch (e) {
+      console.log(e);
+      return null;
     }
   },
 };
 
 // Export the helper object
 module.exports.twitterService = twitterService;
-
-
+twitterService.getUserInfo("dibolero");

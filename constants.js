@@ -4,7 +4,7 @@ const constants = {
     DENIED:3,
     VERIFICATION_TEXT:"Even the floor ones look cool af.",
     VERIFICATION_FOLLOW:"@elonmusk",
-    CONGRATULATIONS_TEXT:"Welcome to the crypt, ",
+    CONGRATULATIONS_TEXT:"Your application to the mummy list has been accepted. Welcome to the Desert!",
     CONGRATULATIONS_TWEET:"Cool",
   };
   
