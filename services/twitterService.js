@@ -1,6 +1,7 @@
 const Twit = require("twit");
 const fs = require("fs");
 const path = require("path");
+const axios = require("axios");
 
 const client = new Twit({
   consumer_key: "uZ2zXfLWEqo0VatQtwYtyAOaU",
@@ -15,7 +16,12 @@ const { imageService } = require("./imageService");
 const twitterService = {
   sendTweet: async (username) => {
     return new Promise(async (resolve, reject) => {
-      const bufferImage = await imageService.createTweetImage(username);
+      const user = await twitterService.getUserInfo(username);
+      const imgUrl = user.profile_image_url.replace("normal","400x400");
+      console.log(imgUrl);
+      const response = await axios.get(imgUrl, { responseType: 'arraybuffer' });
+      const userImage = Buffer.from(response.data, 'binary');
+      const bufferImage = await imageService.createTweetImage(username,userImage);
       const imageData = Buffer.from(bufferImage).toString("base64");
       client.post(
         "media/upload",
@@ -103,4 +109,3 @@ const twitterService = {
 
 // Export the helper object
 module.exports.twitterService = twitterService;
-twitterService.getUserInfo("dibolero");
