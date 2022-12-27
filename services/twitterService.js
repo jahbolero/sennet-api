@@ -14,14 +14,14 @@ const { constants } = require("../constants");
 const { imageService } = require("./imageService");
 
 const twitterService = {
-  sendTweet: async (username) => {
+  sendTweet: async (twitter) => {
     return new Promise(async (resolve, reject) => {
-      const user = await twitterService.getUserInfo(username);
+      const user = await twitterService.getUserInfo(twitter);
       const imgUrl = user.profile_image_url.replace("normal","400x400");
       console.log(imgUrl);
       const response = await axios.get(imgUrl, { responseType: 'arraybuffer' });
       const userImage = Buffer.from(response.data, 'binary');
-      const bufferImage = await imageService.createTweetImage(username,userImage);
+      const bufferImage = await imageService.createTweetImage(twitter,userImage);
       const imageData = Buffer.from(bufferImage).toString("base64");
       client.post(
         "media/upload",
@@ -33,7 +33,7 @@ const twitterService = {
           } else {
             const mediaIdStr = data.media_id_string;
             const params = {
-              status: constants.CONGRATULATIONS_TWEET + " " + username,
+              status: constants.CONGRATULATIONS_TWEET + " " + twitter,
               media_ids: [mediaIdStr],
             };
             client.post("statuses/update", params, (error, data, response) => {
@@ -51,13 +51,13 @@ const twitterService = {
     });
   },
 
-  verifyTweet: async (username) => {
+  verifyTweet: async (twitter) => {
     const numTweets = 10;
 
     try {
       // Use the Twit instance to pull recent tweets from the specified user
       const tweets = await client.get("statuses/user_timeline", {
-        screen_name: username,
+        screen_name: twitter,
         count: numTweets,
         exclude_replies: true,
         include_rts: false,
@@ -71,16 +71,16 @@ const twitterService = {
         return false;
       }
     } catch (error) {
-      console.log(`${username}:${error?.message}`);
+      console.log(`${twitter}:${error?.message}`);
       return false;
     }
   },
 
-  verifyFollow: async (username) => {
+  verifyFollow: async (twitter) => {
     try {
       // Get a list of the users that user1 follows
       const { data } = await client.get("friendships/show", {
-        source_screen_name: username,
+        source_screen_name: twitter,
         target_screen_name: constants.VERIFICATION_FOLLOW,
       });
 
@@ -89,15 +89,15 @@ const twitterService = {
       console.log(follows);
       return follows;
     } catch (error) {
-      console.log(`${username}:${error?.message}`);
+      console.log(`${twitter}:${error?.message}`);
       return false;
     }
   },
 
-  getUserInfo: async (username) => {
+  getUserInfo: async (twitter) => {
     try {
       const { data } = await client.get("users/show", {
-        screen_name: username,
+        screen_name: twitter,
       });
       return data;
     } catch (e) {

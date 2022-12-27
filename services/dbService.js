@@ -15,11 +15,11 @@ const dbService = {
     if (!obj) return true;
     return Object.keys(obj).length === 0;
   },
-  getApplication:(address,twitter)=>{
+  getApplication:async(address,twitter)=>{
     const text = `SELECT * FROM applications
     WHERE address = $1 OR twitter = $2`
-    const params = [address, twitter]
-    return dbService.query(text,params);
+    const params = [address.toLocaleLowerCase(), twitter]
+    return await dbService.query(text,params);
   }
 };
 

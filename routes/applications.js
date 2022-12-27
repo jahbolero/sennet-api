@@ -9,9 +9,42 @@ const { twitterService } = require("../services/twitterService");
 // Set up the API routes
 router.get("/applications", async (req, res) => {
   let result = await dbService.query(`SELECT * FROM applications`);
-  res.send("Hello, world!");
+  res.send(result);
 });
 
+router.get("/applications/account", async (req, res) => {
+  try {
+    const { address,twitter } = req.query;
+    const result = await dbService.getApplication(address.toLocaleLowerCase(),twitter)
+    const application = result.rows[0];
+
+    if (dbService.isEmpty(application)) {
+      res.status(404).send({application:null});
+    }else{
+      res.status(200).send({ application });
+    }
+
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({ message: "Server Error" });
+  }
+});
+
+router.get("/applications/verify", async (req, res) => {
+  try {
+    const { twitter,address } = req.query;
+    const hasFollowed = await twitterService.verifyFollow(twitter);
+    const hasTweeted = await twitterService.verifyTweet(twitter);
+    const twitterInfo = await twitterService.getUserInfo(twitter);
+    const result = await dbService.getApplication(address.toLocaleLowerCase(),twitter)
+    const application = result.rows[0];
+    
+    res.status(200).send({ hasFollowed, hasTweeted,twitterInfo,application });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({ message: "Server Error" });
+  }
+});
 // Define the "applications" route
 router
   .route("/applications")
