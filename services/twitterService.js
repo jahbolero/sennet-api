@@ -106,7 +106,7 @@ const twitterService = {
     }
   },
   cleanTwitterUser: (twitter) =>{
-    return twitter.replace(/@/g, '');
+    return twitter?.replace(/@/g, '');
   }
 };
 
