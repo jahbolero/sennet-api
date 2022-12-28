@@ -15,7 +15,7 @@ router.get("/applications", async (req, res) => {
 router.get("/applications/account", async (req, res) => {
   try {
     const { address,twitter } = req.query;
-    const result = await dbService.getApplication(address.toLocaleLowerCase(),twitter)
+    const result = await dbService.getApplication(address.toLocaleLowerCase(),twitterService.cleanTwitterUser(twitter))
     const application = result.rows[0];
 
     if (dbService.isEmpty(application)) {
@@ -33,10 +33,10 @@ router.get("/applications/account", async (req, res) => {
 router.get("/applications/verify", async (req, res) => {
   try {
     const { twitter,address } = req.query;
-    const hasFollowed = await twitterService.verifyFollow(twitter);
-    const hasTweeted = await twitterService.verifyTweet(twitter);
-    const twitterInfo = await twitterService.getUserInfo(twitter);
-    const result = await dbService.getApplication(address.toLocaleLowerCase(),twitter)
+    const hasFollowed = await twitterService.verifyFollow(twitterService.cleanTwitterUser(twitter));
+    const hasTweeted = await twitterService.verifyTweet(twitterService.cleanTwitterUser(twitter));
+    const twitterInfo = await twitterService.getUserInfo(twitterService.cleanTwitterUser(twitter));
+    const result = await dbService.getApplication(address.toLocaleLowerCase(),twitterService.cleanTwitterUser(twitter))
     const application = result.rows[0];
     
     res.status(200).send({ hasFollowed, hasTweeted,twitterInfo,application });
@@ -68,7 +68,7 @@ router
       // Check if the application already exists
       let result = await dbService.getApplication(
         address.toLocaleLowerCase(),
-        twitter
+        twitterService.cleanTwitterUser(twitter)
       );
       let application = result.rows[0];
       if (!dbService.isEmpty(application)) {
@@ -76,9 +76,9 @@ router
       }
       // console.log("Verifying follow");
       // Verify if the application passes twitter verification.
-      const isFollow = await twitterService.verifyFollow(twitter);
+      const isFollow = await twitterService.verifyFollow(twitterService.cleanTwitterUser(twitter));
 
-      const isVerified = await twitterService.verifyTweet(twitter);
+      const isVerified = await twitterService.verifyTweet(twitterService.cleanTwitterUser(twitter));
 
       if (!isFollow || !isVerified) {
         let errorMessage = "";
@@ -101,7 +101,7 @@ router
          RETURNING *`,
         [
           address.toLocaleLowerCase(),
-          twitter,
+          twitterService.cleanTwitterUser(twitter),
           constants.SUBMITTED,
           submittedOn,
           updatedOn,
@@ -127,7 +127,7 @@ router
 
       let existingApplication = await dbService.getApplication(
         address.toLocaleLowerCase(),
-        twitter
+        twitterService.cleanTwitterUser(twitter)
       );
 
       if (dbService.isEmpty(existingApplication)) {
@@ -156,7 +156,7 @@ router
        SET status = $1, updatedon = $2
        WHERE address = $3 AND twitter = $4
        RETURNING *`,
-        [status, updatedon, address.toLocaleLowerCase(), twitter]
+        [status, updatedon, address.toLocaleLowerCase(), twitterService.cleanTwitterUser(twitter)]
       );
       const application = result.rows[0];
 
@@ -166,7 +166,7 @@ router
       } else {
         // Return the updated application
         if (application.status == constants.APPROVED) {
-          await twitterService.sendTweet(twitter);
+          await twitterService.sendTweet(twitterService.cleanTwitterUser(twitter));
         }
 
         res.json(application);

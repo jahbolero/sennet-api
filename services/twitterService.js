@@ -4,10 +4,10 @@ const path = require("path");
 const axios = require("axios");
 
 const client = new Twit({
-  consumer_key: "uZ2zXfLWEqo0VatQtwYtyAOaU",
-  consumer_secret: "6CMTSiRL3pcSzIfvexQeWGHAVMs7J66x1OVTn0RO5c9m92o80s",
-  access_token: "2751997813-LYfdbSxhyLrjtDmOlIptkyjqmDH3l8X4nhYO27M",
-  access_token_secret: "waGFX4ksTxyL1vldKUgmzkaMbrSHHkz6e85mgTFVLbUeH",
+  consumer_key: process.env.CONSUMER_KEY,
+  consumer_secret: process.env.CONSUMER_SECRET,
+  access_token: process.env.ACCESS_TOKEN,
+  access_token_secret: process.env.ACCESS_TOKEN_SECRET,
 });
 
 const { constants } = require("../constants");
@@ -105,6 +105,9 @@ const twitterService = {
       return null;
     }
   },
+  cleanTwitterUser: (twitter) =>{
+    return twitter.replace(/@/g, '');
+  }
 };
 
 // Export the helper object
