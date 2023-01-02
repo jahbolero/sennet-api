@@ -2,10 +2,10 @@ const constants = {
     SUBMITTED:1,
     APPROVED:2,
     DENIED:3,
-    VERIFICATION_TEXT:"Even the floor ones look cool af.",
-    VERIFICATION_FOLLOW:"@elonmusk",
+    VERIFICATION_TEXT:"This is my official application to join @TheSennets",
+    VERIFICATION_FOLLOW:"@TheSennets",
     CONGRATULATIONS_TEXT:"Your application to the mummy list has been accepted. Welcome to the Desert!",
-    CONGRATULATIONS_TWEET:"Cool",
+    CONGRATULATIONS_TWEET:"Congratulations @User_ID welcome to the desert!",
   };
   
   // Export the helper object

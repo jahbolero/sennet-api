@@ -33,7 +33,7 @@ const twitterService = {
           } else {
             const mediaIdStr = data.media_id_string;
             const params = {
-              status: constants.CONGRATULATIONS_TWEET + " " + twitter,
+              status: constants.CONGRATULATIONS_TWEET.replace("User_ID",twitter),
               media_ids: [mediaIdStr],
             };
             client.post("statuses/update", params, (error, data, response) => {
@@ -64,10 +64,8 @@ const twitterService = {
       });
       var text = JSON.stringify(tweets.data);
       if (text.includes(constants.VERIFICATION_TEXT)) {
-        console.log("VALID TWEET");
         return true;
       } else {
-        console.log("INVALID TWEET");
         return false;
       }
     } catch (error) {
@@ -86,7 +84,6 @@ const twitterService = {
 
       // Check if user2 is in the list of users that user1 follows
       const follows = data.relationship.source.following;
-      console.log(follows);
       return follows;
     } catch (error) {
       console.log(`${twitter}:${error?.message}`);

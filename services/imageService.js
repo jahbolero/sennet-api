@@ -28,7 +28,7 @@ const imageService = {
       "base64"
     )}" clip-path="url(#hexagonClip)" />
     
-    <text x="150" y="450" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="60">Congratulations ${twitter}</text>
+    <text x="150" y="450" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="60">Congratulations @${twitter}</text>
     <text x="150" y="550" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" width="250" font-size="42">Your application to the mummy list has</text>
     <text x="150" y="600" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" width="250" font-size="42">been accepted. Welcome to the Desert!</text>
     
