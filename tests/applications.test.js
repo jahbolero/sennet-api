@@ -29,7 +29,7 @@ describe("Applications", () => {
       signature:
         "0x0bf04eb2efea30e13125111dd2d7a28b3b851d276e79f2351d7236488e7c73346ca3f84b357dcd37f367bea9b9235cbcb410aba43092f21ebf9a3313de705ad41b",
       message: "hello world",
-      twitter: "bonkxbt",
+      twitter: "nalalee20",
       applicationBody: "PLEASE ACCEPT ME HUHU",
     };
     it("should insert a new application", async () => {
@@ -97,7 +97,7 @@ describe("PUT /api/applications", () => {
     signature:
       "0x0bf04eb2efea30e13125111dd2d7a28b3b851d276e79f2351d7236488e7c73346ca3f84b357dcd37f367bea9b9235cbcb410aba43092f21ebf9a3313de705ad41b",
     message: "hello world",
-    twitter: "bonkxbt",
+    twitter: "nalalee20",
     applicationBody: "PLEASE ACCEPT ME HUHU",
   };
   it("should update an existing application", async () => {
@@ -111,7 +111,7 @@ describe("PUT /api/applications", () => {
         "0xcc8bdaac08efb6ff6c85e0e5ea4cc97bfdf3ff31e10acb8c4665d80d834796aa4ecea31f3abcd1e89b6ab47c8938e9e9ae2ce9bb8ce7dd7fca443377bcacd16a1b",
       message: "verifying signature",
       address: "0xaf5a6b093bcd2ef9ce9ffc5555c71dae6e58bef9",
-      twitter: "bonkxbt",
+      twitter: "nalalee20",
       status: constants.APPROVED,
     };
     const res = await chai
@@ -143,7 +143,7 @@ describe("PUT /api/applications", () => {
         "0xcc8bdaac08efb6ff6c85e0e5ea4cc97bfdf3ff31e10acb8c4665d80d834796aa4ecea31f3abcd1e89b6ab47c8938e9e9ae2ce9bb8ce7dd7fca443377bcacd16a1b",
       message: "verifying signature",
       address: "0xaf5a6b093bcd2ef9ce9ffc5555c71dae6e58bef9zz",
-      twitter: "bonkxbtww",
+      twitter: "nalalee20ww",
       status: constants.APPROVED,
     };
     const res = await chai
@@ -164,7 +164,7 @@ describe("PUT /api/applications", () => {
       signer: "0xb0c5c06af6145f279f8ec7e3f8a9605ba7fb8ebe",
       message: "verifying signature",
       address: "0xaf5a6b093bcd2ef9ce9ffc5555c71dae6e58bef9",
-      twitter: "bonkxbt",
+      twitter: "nalalee20",
       status: constants.APPROVED,
     };
     const res = await chai

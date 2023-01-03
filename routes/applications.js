@@ -80,6 +80,8 @@ router
 
       const isVerified = await twitterService.verifyTweet(twitterService.cleanTwitterUser(twitter));
 
+      const twitterInfo = await twitterService.getUserInfo(twitterService.cleanTwitterUser(twitter));
+
       if (!isFollow || !isVerified) {
         let errorMessage = "";
         errorMessage += isFollow
@@ -96,8 +98,8 @@ router
       const updatedOn = new Date();
       result = await dbService.query(
         `INSERT INTO applications
-         (address, twitter, status, submittedOn, updatedOn, applicationBody)
-         VALUES ($1, $2, $3, $4, $5, $6)
+         (address, twitter, status, submittedOn, updatedOn, applicationBody,followers)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING *`,
         [
           address.toLocaleLowerCase(),
@@ -106,6 +108,7 @@ router
           submittedOn,
           updatedOn,
           applicationBody,
+          twitterInfo.followers_count
         ]
       );
       application = result.rows[0];
