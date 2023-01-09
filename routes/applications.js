@@ -54,6 +54,8 @@ router
       const { address, signature, message, twitter, applicationBody } =
         req.body;
 
+      const applicationObject = JSON.parse(applicationBody);
+
       //Check if the signature is valid, coming from the right address
       const isValid = await etherService.verifySignature(
         signature,
@@ -62,6 +64,11 @@ router
       );
       if (!isValid) {
         res.status(400).send({ message: "Invalid_Signature" });
+        return;
+      }
+
+      if((applicationObject.date + 3000) < Date.now()){
+        res.status(400).send({ message: "Signature_Expired" });
         return;
       }
 
