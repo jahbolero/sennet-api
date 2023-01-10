@@ -2,6 +2,7 @@ const Web3 = require("web3");
 // The Web3 object
 const web3 = new Web3("https://web3-trial.cloudflare-eth.com/v1/mainnet");
 const Web3EthAccounts = require("web3-eth-accounts");
+const { constants } = require("../constants");
 
 const etherService = {
   verifySignature: async (signature, address,message) => {
@@ -22,6 +23,12 @@ const etherService = {
     }
     return isValid;
   },
+  isSignatureExpired: (date)=>{
+    if(!date){
+      return false;
+    }
+   return (date + constants.SIGNATURE_EXPIRY_SECONDS) < Date.now();
+  }
 };
 
 // Export the helper object

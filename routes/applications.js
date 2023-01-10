@@ -67,7 +67,7 @@ router
         return;
       }
 
-      if((applicationObject.date + 3000) < Date.now()){
+      if(etherService.isSignatureExpired(applicationObject?.date)){
         res.status(400).send({ message: "Signature_Expired" });
         return;
       }

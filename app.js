@@ -14,7 +14,9 @@ app.use(
 app.use(express.json());
 // Set up the API routes
 const applications = require("./routes/applications");
+const authorize = require("./routes/authorize");
 app.use("/api", applications);
+app.use("/api", authorize);
 
 // Start the server
 var server = app.listen(port, () => {
