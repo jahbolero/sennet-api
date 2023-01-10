@@ -11,6 +11,18 @@ router.get("/applications", async (req, res) => {
   let result = await dbService.query(`SELECT * FROM applications`);
   res.send(result);
 });
+router.get("/applications/filteredApplications", async (req, res) => {
+  const {status,searchQuery} = req.query;
+  let result;
+  if(searchQuery == ""){
+     result = await dbService.query(`SELECT * FROM applications WHERE status = $1`,[status]);
+  }else{
+    searchQuery = searchQuery.toLocaleLowerCase();
+     result = await dbService.query(`SELECT * FROM applications WHERE status = $1 OR address = $2 OR twitter = $2`,[status, searchQuery]);
+  }
+
+  res.send(result.rows);
+});
 
 router.get("/applications/account", async (req, res) => {
   try {
