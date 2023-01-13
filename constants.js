@@ -7,7 +7,7 @@ const constants = {
     VERIFICATION_FOLLOW:"@TheSennets",
     CONGRATULATIONS_TEXT:"Your application to the mummy list has been accepted. Welcome to the Desert!",
     CONGRATULATIONS_TWEET:"Congratulations @User_ID welcome to the desert!",
-    SIGNATURE_EXPIRY_SECONDS:5000
+    SIGNATURE_EXPIRY_SECONDS:10000
   };
   
   // Export the helper object

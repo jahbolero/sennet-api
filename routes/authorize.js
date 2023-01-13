@@ -23,8 +23,6 @@ router.route("/authorize").post(async (req, res) => {
   const isAuthorized = authorizedSigners.find(
     (x) => x.toLocaleLowerCase() == signer.toLocaleLowerCase()
   );
-  console.log(authorizedSigners)
-  console.log(isAuthorized);
   if (!isValid || !isAuthorized) {
     res.status(400).send({ message: "Unauthorized_Update" });
     return;

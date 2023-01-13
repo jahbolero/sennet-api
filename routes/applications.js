@@ -12,13 +12,13 @@ router.get("/applications", async (req, res) => {
   res.send(result);
 });
 router.get("/applications/filteredApplications", async (req, res) => {
-  const {status,searchQuery} = req.query;
+  let {status,searchQuery} = req.query;
   let result;
   if(searchQuery == ""){
      result = await dbService.query(`SELECT * FROM applications WHERE status = $1`,[status]);
   }else{
     searchQuery = searchQuery.toLocaleLowerCase();
-     result = await dbService.query(`SELECT * FROM applications WHERE status = $1 OR address = $2 OR twitter = $2`,[status, searchQuery]);
+     result = await dbService.query(`SELECT * FROM applications WHERE status = $1 AND address = $2 OR twitter = $2`,[status, searchQuery]);
   }
 
   res.send(result.rows);
@@ -63,10 +63,10 @@ router
   // Insert a new application
   .post(async (req, res) => {
     try {
-      const { address, signature, message, twitter, applicationBody } =
+      const { address, signature, message, twitter } =
         req.body;
 
-      const applicationObject = JSON.parse(applicationBody);
+      const applicationObject = JSON.parse(message);
 
       //Check if the signature is valid, coming from the right address
       const isValid = await etherService.verifySignature(
@@ -113,8 +113,8 @@ router
       }
 
       // Insert the application into the database
-      const submittedOn = new Date();
-      const updatedOn = new Date();
+      const submittedOn = Date.now()
+      const updatedOn = Date.now()
       result = await dbService.query(
         `INSERT INTO applications
          (address, twitter, status, submittedOn, updatedOn, applicationBody,followers)
@@ -126,7 +126,7 @@ router
           constants.SUBMITTED,
           submittedOn,
           updatedOn,
-          applicationBody,
+          message,
           twitterInfo.followers_count
         ]
       );
@@ -144,12 +144,13 @@ router
   .put(async (req, res) => {
     try {
       // Get the application data from the request body
-      const { signature, signer, message, address, twitter, status } = req.body;
-      const updatedon = new Date();
+      const { signature, signer, message} = req.body;
+      const updatedon = Date.now()
+      const updatedApplication = JSON.parse(message);
 
       let existingApplication = await dbService.getApplication(
-        address.toLocaleLowerCase(),
-        twitterService.cleanTwitterUser(twitter)
+        updatedApplication.address.toLocaleLowerCase(),
+        twitterService.cleanTwitterUser(updatedApplication.twitter)
       );
 
       if (dbService.isEmpty(existingApplication)) {
@@ -158,17 +159,20 @@ router
 
       const isValid = await etherService.verifySignature(
         signature,
-        signer,
+        signer.toLocaleLowerCase(),
         message
       );
       var authorizedSigners = process.env.AUTHORIZED_SIGNERS.split(",");
-      console.log(authorizedSigners);
-      console.log(signer);
       const isAuthorized = authorizedSigners.find(
         (x) => x.toLocaleLowerCase() == signer.toLocaleLowerCase()
       );
       if (!isValid || !isAuthorized) {
         res.status(400).send({ message: "Unauthorized_Update" });
+        return;
+      }
+
+      if(etherService.isSignatureExpired(updatedApplication?.date)){
+        res.status(400).send({ message: "Signature_Expired" });
         return;
       }
 
@@ -178,7 +182,7 @@ router
        SET status = $1, updatedon = $2
        WHERE address = $3 AND twitter = $4
        RETURNING *`,
-        [status, updatedon, address.toLocaleLowerCase(), twitterService.cleanTwitterUser(twitter)]
+        [updatedApplication.status, updatedon, updatedApplication.address.toLocaleLowerCase(), twitterService.cleanTwitterUser(updatedApplication.twitter)]
       );
       const application = result.rows[0];
 
@@ -188,7 +192,7 @@ router
       } else {
         // Return the updated application
         if (application.status == constants.APPROVED) {
-          await twitterService.sendTweet(twitterService.cleanTwitterUser(twitter));
+          await twitterService.sendTweet(twitterService.cleanTwitterUser(updatedApplication.twitter));
         }
 
         res.json(application);
